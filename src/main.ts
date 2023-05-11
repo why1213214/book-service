@@ -2,6 +2,8 @@ import { NestFactory } from '@nestjs/core';
 import { VersioningType } from '@nestjs/common';
 import { NestFastifyApplication, FastifyAdapter } from '@nestjs/platform-fastify';
 import { AppModule } from './app.module';
+import fastify from 'fastify';
+import { FastifyLogger } from './common/logger';
 // 异常拦截
 import { AllExceptionsFilter } from './common/exceptions/base.exception.filter';
 import { HttpExceptionFilter } from './common/exceptions/http.exception.filter';
@@ -11,7 +13,10 @@ import { generateDocument } from './doc';
 
 declare const module: any;
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter({logger: true}));
+  const fastifyInstance = fastify({
+    logger: FastifyLogger,
+  })
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule, new FastifyAdapter(fastifyInstance));
 
     // 接口版本化管理 ==> 预留，看情况决定后续用不用
     app.enableVersioning({
