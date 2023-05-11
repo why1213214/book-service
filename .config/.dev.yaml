@@ -1,0 +1,15 @@
+TEST_VALUE:
+  name: cookie
+
+
+MYSQL_CONFIG:
+  name: "book-service"
+  type: "mysql"
+  host: "localhost"
+  port: 3306
+  username: "root"
+  password: "whygxy981213"
+  database: "bookDB"
+  entities: "mysql"
+  synchronize: true,
+  autoLoadEntities: true
