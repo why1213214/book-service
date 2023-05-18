@@ -1,39 +1,30 @@
 import { FastifyReply, FastifyRequest } from "fastify";
+
 import {
   ExceptionFilter,
   Catch,
   ArgumentsHost,
-  HttpException,
   HttpStatus,
+  ServiceUnavailableException,
+  HttpException,
 } from '@nestjs/common';
-import { BusinessException } from "./business.exception";
+// http 异常捕获
 
-@Catch(HttpException)
+@Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
-  catch(exception: HttpException, host: ArgumentsHost) {
+  catch(exception: Error, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
-    const status = exception.getStatus();
 
-    // 处理业务异常
-    if (exception instanceof BusinessException) {
-      const error = exception.getResponse();
-      response.status(HttpStatus.OK).send({
-        data: null,
-        status: error['code'],
-        extra: {},
-        message: error['message'],
-        success: false,
-      });
-      return;
-    }
+    request.log.error(exception)
 
-    response.status(status).send({
-      statusCode: status,
+    // 非 HTTP 标准异常的处理。
+    response.status(HttpStatus.SERVICE_UNAVAILABLE).send({
+      statusCode: HttpStatus.SERVICE_UNAVAILABLE,
       timestamp: new Date().toISOString(),
       path: request.url,
-      message: exception.getResponse(),
+      message: new ServiceUnavailableException().getResponse(),
     });
   }
 }

@@ -23,9 +23,9 @@ export class TransformInterceptor<T>
       map((data) => ({
         // 统一返回格式
         data,
-        status: 0,
-        message: 'success',
-        success: true,
+        code: data.code || 0,
+        message: data.message || 'success',
+        success: data.success || true,
       })),
     );
   }

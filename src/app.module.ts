@@ -5,6 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { getConfig } from './utils';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UserModule } from './user/user.module'
+import { UserEntity } from './user/user.entity';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ ignoreEnvFile: true, isGlobal: true, load: [getConfig] }),
@@ -14,7 +16,7 @@ import { UserModule } from './user/user.module'
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         type: 'mysql', // 数据库类型
-        entities: [],  // 数据表实体
+        entities: [UserEntity],  // 数据表实体
         host: configService.get('DB_HOST', 'localhost'), // 主机，默认为localhost
         port: configService.get<number>('DB_PORT', 3306), // 端口号
         username: configService.get('DB_USER', 'root'),   // 用户名
